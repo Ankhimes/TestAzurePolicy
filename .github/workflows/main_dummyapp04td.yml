@@ -26,6 +26,12 @@ jobs:
     - name: dotnet publish
       run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
+    - name: Create or Update Azure Policies
+      uses: azure/manage-azure-policy@v0
+      with:      
+        paths:  |                  
+          policies/TDTestPolicy
+          
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
       with:
