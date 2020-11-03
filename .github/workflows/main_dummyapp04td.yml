@@ -9,6 +9,24 @@ on:
       - main
 
 jobs:
+  apply-azure-policy:    
+    runs-on: ubuntu-latest
+    steps:
+    # Azure Login       
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{secrets.AZURE_CREDENTIALS}}
+
+    - name: Checkout
+      uses: actions/checkout@v2 
+
+    - name: Create or Update Azure Policies
+      uses: azure/manage-azure-policy@v0
+      with:      
+        paths:  |                  
+          policies/**
+               
   build-and-deploy:
     runs-on: ubuntu-latest
 
@@ -25,13 +43,7 @@ jobs:
 
     - name: dotnet publish
       run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
-
-    - name: Create or Update Azure Policies
-      uses: azure/manage-azure-policy@v0
-      with:      
-        paths:  |                  
-          policies/TDTestPolicy
-          
+         
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
       with:
